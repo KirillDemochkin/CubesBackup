@@ -9,7 +9,7 @@ public class Voxel {
     public Vector3 position;
     //public MeshRenderer meshRenderer;
 
-    
+    public Voxel() {}    
 
     public Voxel(int x, int y, int z, float size)
     {
@@ -26,24 +26,46 @@ public class Voxel {
         zEdge.z += size * 0.5f;
     }
 
-    /*private void OnTriggerEnter(Collider other)
+    public void becomeXDummyOf(Voxel voxel, float offset)
     {
-        //Debug.Log("collided with voxel");
-        if (other.tag == "Brush")
-        {
-            if(other.transform.parent.gameObject.GetComponent<BrushController>().mode == BrushController.BrushMode.Filled)
-            {
-                state = true;
-                meshRenderer.material.color = Color.red;
-                Debug.Log(position.x + ", " + position.y + ", " + position.z + ", " + " is On");
+        state = voxel.state;
+        position = voxel.position;
+        xEdge = voxel.xEdge;
+        yEdge = voxel.yEdge;
+        zEdge = voxel.zEdge;
+        position.x += offset;
+        xEdge.x += offset;
+        yEdge.x += offset;
+        zEdge.x += offset;
+    }
 
-            } else if(other.transform.parent.gameObject.GetComponent<BrushController>().mode == BrushController.BrushMode.Empty)
-            {
-                state = false;
-                meshRenderer.material.color = Color.white;
-                Debug.Log(position.x + ", " + position.y + ", " + position.z + ", " + " is Off");
-            }
-        }
-    }*/
+    public void becomeYDummyOf(Voxel voxel, float offset)
+    {
+        state = voxel.state;
+        position = voxel.position;
+        xEdge = voxel.xEdge;
+        yEdge = voxel.yEdge;
+        zEdge = voxel.zEdge;
+        position.y += offset;
+        xEdge.y += offset;
+        yEdge.y += offset;
+        zEdge.y += offset;
+    }
+    public void becomeXYDummyOf(Voxel voxel, float offset)
+    {
+        state = voxel.state;
+        position = voxel.position;
+        xEdge = voxel.xEdge;
+        yEdge = voxel.yEdge;
+        zEdge = voxel.zEdge;
+        position.y += offset;
+        xEdge.y += offset;
+        yEdge.y += offset;
+        zEdge.y += offset;
+        position.y += offset;
+        xEdge.y += offset;
+        yEdge.y += offset;
+        zEdge.y += offset;
+    }
 
 }

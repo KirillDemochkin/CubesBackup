@@ -35,6 +35,7 @@ public class VoxelMap : MonoBehaviour {
             {
                 for (int x = 0; x < chunkResolution; x++, i++)
                 {
+                    
                     createChunk(i, x, y, z);
                 }
             }
@@ -61,22 +62,57 @@ public class VoxelMap : MonoBehaviour {
         voxelX -= chunkX * voxelResolution;
         voxelY -= chunkY * voxelResolution;
         voxelZ -= chunkZ * voxelResolution;
-        Debug.Log(voxelX + ", " + voxelY + ", " + voxelZ + ", ");
-        bool state = mode == BrushController.BrushMode.Filled ? true : false;
+        int radius = 0;
+        int xStart = (voxelX - radius) / voxelResolution;
+        if (xStart < 0) xStart = 0;
+        int xEnd = (voxelX + radius) / voxelResolution;
+        if (xEnd >= chunkResolution) xEnd = chunkResolution - 1;
 
-        if (chunks[chunkZ * chunkResolution * chunkResolution + chunkY * chunkResolution + chunkX].voxels[voxelZ * voxelResolution * voxelResolution + voxelY * voxelResolution + voxelX].state != state)
-        {
-            chunks[chunkZ * chunkResolution * chunkResolution + chunkY * chunkResolution + chunkX].setVoxel(voxelX, voxelY, voxelZ, state);
+        int yStart = (voxelY - radius) / voxelResolution;
+        if (yStart < 0) yStart = 0;
+        int yEnd = (voxelY + radius) / voxelResolution;
+        if (yEnd >= chunkResolution) yEnd = chunkResolution - 1;
+
+        int zStart = (voxelZ - radius) / voxelResolution;
+        if (zStart < 0) zStart = 0;
+        int zEnd = (voxelZ + radius) / voxelResolution;
+        if (zEnd >= chunkResolution) zEnd = chunkResolution - 1;
+
+        //Debug.Log(voxelX + ", " + voxelY + ", " + voxelZ + ", ");
+        bool state = mode == BrushController.BrushMode.Filled ? true : false;
+        int chunkIndex = chunkZ * chunkResolution * chunkResolution + chunkY * chunkResolution + chunkX;
+        if (chunks[chunkIndex].voxels[voxelZ * voxelResolution * voxelResolution + voxelY * voxelResolution + voxelX].state != state)
+        { 
+            chunks[chunkIndex].setVoxel(voxelX, voxelY, voxelZ, state);
         }
+        refreshNeighbours(chunkIndex);
+
+    }
+
+    private void refreshNeighbours(int i)
+    { 
+        if (i - 1 >= 0) chunks[i - 1].refresh();//b
+        if(i - chunkResolution >= 0) chunks[i - chunkResolution].refresh();//c
+        if(i - chunkResolution - 1 >= 0) chunks[i - chunkResolution - 1].refresh();//d
+        if(i - chunkResolution * chunkResolution - chunkResolution - 1 >= 0) chunks[i - chunkResolution * chunkResolution - chunkResolution - 1].refresh();//h
+        if(i - chunkResolution * chunkResolution - chunkResolution >= 0) chunks[i - chunkResolution * chunkResolution - chunkResolution].refresh(); //g
+        if(i - chunkResolution * chunkResolution >= 0) chunks[i - chunkResolution * chunkResolution].refresh(); //e
+        if(i - chunkResolution * chunkResolution - 1 >= 0) chunks[i - chunkResolution * chunkResolution - 1].refresh(); //f
     }
 
     private void createChunk(int i, int x, int y, int z)
     {
         VoxelChunk chunk = Instantiate(voxelChunkPrefab) as VoxelChunk;
+        /*float offsetX = x == 0 ? 0 : voxelSize;
+        float offsetY = y == 0 ? 0 : voxelSize;
+        float offsetZ = z == 0 ? 0 : voxelSize;*/
+        float offsetX = 0;
+        float offsetY = 0;
+        float offsetZ = 0;
 
         chunk.initialize(voxelResolution, chunkSize, meshMaterial, cellConfig);
         chunk.transform.parent = transform;
-        chunk.transform.localPosition = new Vector3(x * chunkSize - halfSize, y * chunkSize - halfSize, z * chunkSize - halfSize );
+        chunk.transform.localPosition = new Vector3(x * chunkSize - halfSize - offsetX, y * chunkSize - halfSize - offsetY, z * chunkSize - halfSize - offsetZ);
         chunks[i] = chunk;//a
 
         if (x > 0)
@@ -96,7 +132,15 @@ public class VoxelMap : MonoBehaviour {
             }
             if(z > 0)
             {
-                chunks[i - chunkResolution * chunkResolution - chunkResolution].yzNeighbour = chunk;
+                chunks[i - chunkResolution * chunkResolution - chunkResolution].yzNeighbour = chunk; //g
+            }
+        }
+        if(z > 0)
+        {
+            chunks[i - chunkResolution * chunkResolution].zNeighbour = chunk; //e
+            if(x > 0)
+            {
+                chunks[i - chunkResolution * chunkResolution - 1].xzNeighbour = chunk; //f
             }
         }
     }
