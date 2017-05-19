@@ -8,7 +8,7 @@ public class VoxelMap : MonoBehaviour {
 
     public  int voxelResolution = 4;
     public  int chunkResolution = 2;
-
+    
     public int cellConfig;
 
     public Material meshMaterial;
@@ -62,21 +62,7 @@ public class VoxelMap : MonoBehaviour {
         voxelX -= chunkX * voxelResolution;
         voxelY -= chunkY * voxelResolution;
         voxelZ -= chunkZ * voxelResolution;
-        int radius = 0;
-        int xStart = (voxelX - radius) / voxelResolution;
-        if (xStart < 0) xStart = 0;
-        int xEnd = (voxelX + radius) / voxelResolution;
-        if (xEnd >= chunkResolution) xEnd = chunkResolution - 1;
-
-        int yStart = (voxelY - radius) / voxelResolution;
-        if (yStart < 0) yStart = 0;
-        int yEnd = (voxelY + radius) / voxelResolution;
-        if (yEnd >= chunkResolution) yEnd = chunkResolution - 1;
-
-        int zStart = (voxelZ - radius) / voxelResolution;
-        if (zStart < 0) zStart = 0;
-        int zEnd = (voxelZ + radius) / voxelResolution;
-        if (zEnd >= chunkResolution) zEnd = chunkResolution - 1;
+        
 
         //Debug.Log(voxelX + ", " + voxelY + ", " + voxelZ + ", ");
         bool state = mode == BrushController.BrushMode.Filled ? true : false;

@@ -113,6 +113,8 @@ public class VoxelChunk : MonoBehaviour {
             dummyX2.becomeXDummyOf(xNeighbour.voxels[resolution * resolution], chunkSize);
         }
 
+        
+
         triangulateCell();
 
         mesh.vertices = vertices.ToArray();
@@ -152,7 +154,7 @@ public class VoxelChunk : MonoBehaviour {
                 }
                 if(xNeighbour != null)
                 {
-                    triangulateGapCell(i);
+                    triangulateGapCell(y, z);
                 }
             }
             if(yNeighbour != null)
@@ -160,48 +162,51 @@ public class VoxelChunk : MonoBehaviour {
                 triangulateGapRow(z);
             }
         }
+        if (zNeighbour != null)
+        {
+            triangulateGapLayer();
+        }
     }
 
 
-    private void triangulateGapCell(int i)
+    private void triangulateGapCell(int y, int z)
     {
-        Voxel dummySwap = dummyT1;
-        dummySwap.becomeXDummyOf(xNeighbour.voxels[i + 1], chunkSize);
-        dummyT1 = dummyX1;
-        dummyX1 = dummySwap;
 
-        Voxel dummySwap2 = dummyT2;
-        dummySwap2.becomeXDummyOf(xNeighbour.voxels[i + 1 + resolution * resolution], chunkSize);
-        dummyT2 = dummyX2;
-        dummyX2 = dummySwap2;
+        dummyX1.becomeXDummyOf(xNeighbour.voxels[z * resolution * resolution + y * resolution], chunkSize);
+        dummyX2.becomeXDummyOf(xNeighbour.voxels[(z + 1) * resolution * resolution + y * resolution], chunkSize);
+        dummyT1.becomeXDummyOf(xNeighbour.voxels[z * resolution * resolution + (y + 1) * resolution], chunkSize);
+        dummyT2.becomeXDummyOf(xNeighbour.voxels[(z + 1) * resolution * resolution + (y + 1) * resolution], chunkSize);
 
         lookupCell(
-            voxels[i],
-            dummyT1,
-            voxels[i + resolution],
+            voxels[z*resolution*resolution+y*resolution+resolution-1],
             dummyX1,
-            voxels[i + resolution * resolution],
-            dummyT2,
-            voxels[i + resolution + resolution * resolution],
-            dummyX2);
+            voxels[z * resolution * resolution + (y+1) * resolution + resolution - 1],
+            dummyT1,
+            voxels[(z+1)*resolution*resolution + y*resolution + resolution - 1],
+            dummyX2,
+            voxels[(z+1) * resolution * resolution + (y + 1) * resolution + resolution - 1],
+            dummyT2 
+            );
     }
 
     private void triangulateGapRow(int i)
     {
-        dummyY1.becomeYDummyOf(yNeighbour.voxels[0], chunkSize);
-        dummyY2.becomeYDummyOf(yNeighbour.voxels[resolution * resolution], chunkSize);
+        
         int cells = resolution - 1;
         int offset = i * resolution * resolution + cells * resolution;
+        dummyY1.becomeYDummyOf(yNeighbour.voxels[i*resolution*resolution], chunkSize);
+        dummyY2.becomeYDummyOf(yNeighbour.voxels[(i+1)*resolution * resolution], chunkSize);
+        
 
         for(int x = 0; x < cells; x++)
         {
             Voxel dummySwap1 = dummyT1;
-            dummySwap1.becomeYDummyOf(yNeighbour.voxels[x + 1], chunkSize);
+            dummySwap1.becomeYDummyOf(yNeighbour.voxels[x + 1 + i * resolution * resolution], chunkSize);
             dummyT1 = dummyY1;
             dummyY1 = dummySwap1;
 
             Voxel dummySwap2 = dummyT2;
-            dummySwap2.becomeYDummyOf(yNeighbour.voxels[x + 1], chunkSize);
+            dummySwap2.becomeYDummyOf(yNeighbour.voxels[x + 1 + (i + 1) * resolution * resolution], chunkSize);
             dummyT2 = dummyY2;
             dummyY2 = dummySwap2;
 
@@ -218,18 +223,150 @@ public class VoxelChunk : MonoBehaviour {
         }
         if(xNeighbour != null)
         {
-            dummyT1.becomeXDummyOf(xyNeighbour.voxels[0], chunkSize);
-            dummyT2.becomeXYDummyOf(xyNeighbour.voxels[resolution * resolution], chunkSize);
+            dummyT1.becomeXYDummyOf(xyNeighbour.voxels[i*resolution*resolution], chunkSize);
+            dummyT2.becomeXYDummyOf(xyNeighbour.voxels[(i+1)*resolution * resolution], chunkSize);
+            Voxel b = new Voxel();
+            b.becomeXDummyOf(xNeighbour.voxels[i * resolution * resolution + cells * resolution], chunkSize);
+            Voxel f = new Voxel();
+            f.becomeXDummyOf(xNeighbour.voxels[(i+1) * resolution * resolution + cells * resolution], chunkSize);
             lookupCell(
-                voxels[voxels.Length - 1 - resolution * resolution],
-                dummyX1,
+                voxels[i*resolution*resolution+cells*resolution+cells],
+                b,
                 dummyY1,
                 dummyT1,
-                voxels[voxels.Length - 1],
-                dummyX2,
+                voxels[(i + 1) * resolution * resolution + cells * resolution + cells],
+                f,
                 dummyY2,
                 dummyT2);
         }
+    }
+
+    private void triangulateGapLayer()
+    {
+        
+
+        int cells = resolution - 1;
+        int offset = cells * resolution * resolution;
+
+        for(int y = 0, i = 0; y < cells; y++, i++)
+        {
+            dummyZ1.becomeZDummyOf(zNeighbour.voxels[y*resolution], chunkSize);
+            dummyZ2.becomeZDummyOf(zNeighbour.voxels[(y+1)*resolution], chunkSize);
+            for (int x = 0; x < cells; x++, i++)
+            {
+                Voxel dummySwap1 = dummyT1;
+                dummySwap1.becomeZDummyOf(zNeighbour.voxels[i+1], chunkSize);
+                dummyT1 = dummyZ1;
+                dummyZ1 = dummySwap1;
+
+                Voxel dummySwap2 = dummyT2;
+                dummySwap2.becomeZDummyOf(zNeighbour.voxels[i + 1 + resolution], chunkSize);
+                dummyT2 = dummyZ2;
+                dummyZ2 = dummySwap2;
+
+                lookupCell(
+                    voxels[i + offset],
+                    voxels[i+offset+1],
+                    voxels[i + resolution + offset],
+                    voxels[i + offset + resolution + 1],
+                    dummyT1,
+                    dummyZ1,
+                    dummyT2,
+                    dummyZ2
+                    );
+            }
+            if(xNeighbour != null)
+            {
+                Voxel b = new Voxel();
+                b.becomeXDummyOf(xNeighbour.voxels[y * resolution + offset], chunkSize);
+                Voxel d = new Voxel();
+                d.becomeXDummyOf(xNeighbour.voxels[(y + 1) * resolution + offset], chunkSize);
+                
+                Voxel f = new Voxel();
+                f.becomeXZDummyOf(xzNeighbour.voxels[y * resolution], chunkSize);
+                Voxel h = new Voxel();
+                h.becomeXZDummyOf(xzNeighbour.voxels[(y + 1) * resolution], chunkSize);
+                lookupCell
+                    (
+                    voxels[y*resolution + cells*resolution*resolution+cells],
+                    b,
+                    voxels[(y+1)*resolution + cells * resolution * resolution + cells],
+                    d,
+                    dummyZ1,
+                    f,
+                    dummyZ2,
+                    h
+                    );
+                
+            
+            }
+            
+        }
+        if (yNeighbour != null)
+        {
+            Voxel c = new Voxel();
+            c.becomeYDummyOf(yNeighbour.voxels[cells * resolution * resolution], chunkSize);
+            Voxel e = new Voxel();
+            e.becomeZDummyOf(zNeighbour.voxels[resolution * cells], chunkSize);
+            Voxel g = new Voxel();
+            g.becomeYZDummyOf(yzNeighbour.voxels[0], chunkSize);
+            Voxel dummyT3 = new Voxel();
+
+
+
+            for (int x = 0; x < cells; x++)
+            {
+                Voxel dummySwap1 = dummyT1;
+                dummySwap1.becomeYDummyOf(yNeighbour.voxels[cells * resolution * resolution + x + 1], chunkSize);
+                dummyT1 = c;
+                c = dummySwap1;
+
+                Voxel dummySwap2 = dummyT2;
+                dummySwap2.becomeZDummyOf(zNeighbour.voxels[resolution * cells + x + 1], chunkSize);
+                dummyT2 = e;
+                e = dummySwap2;
+
+                Voxel dummySwap3 = dummyT3;
+                dummySwap3.becomeYZDummyOf(yzNeighbour.voxels[x + 1], chunkSize);
+                dummyT3 = g;
+                g = dummySwap3;
+
+                lookupCell
+                    (
+                    voxels[cells * resolution + cells * resolution * resolution + x],
+                    voxels[cells * resolution + cells * resolution * resolution + x + 1],
+                    dummyT1,
+                    c,
+                    dummyT2,
+                    e,
+                    dummyT3,
+                    g
+                    );
+            }
+            if (xNeighbour != null)
+            {
+                Voxel dummyT4 = new Voxel();
+                dummyT1.becomeXYDummyOf(xyNeighbour.voxels[cells * resolution * resolution], chunkSize);
+                dummyT2.becomeXDummyOf(xNeighbour.voxels[cells * resolution + cells * resolution * resolution], chunkSize);
+                dummyT3.becomeXZDummyOf(xzNeighbour.voxels[cells * resolution], chunkSize);
+                dummyT4.becomeXYZDummyOf(xyzNeighbour.voxels[0], chunkSize);
+                c.becomeYDummyOf(yNeighbour.voxels[cells + cells * resolution * resolution], chunkSize);
+                e.becomeZDummyOf(zNeighbour.voxels[cells + cells * resolution], chunkSize);
+                g.becomeYZDummyOf(yzNeighbour.voxels[cells], chunkSize);
+                lookupCell
+                    (
+                    voxels[voxels.Length - 1],
+                    dummyT2,
+                    c,
+                    dummyT1,
+                    e,
+                    dummyT3,
+                    g,
+                    dummyT4
+                    );
+            }
+        }
+
     }
 
     private void lookupCell(Voxel a, Voxel b, Voxel c, Voxel d, Voxel e, Voxel f, Voxel g, Voxel h)
@@ -895,10 +1032,10 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangle(a.xEdge, f.yEdge, b.zEdge);
                 break;
             case 114:
-                addTriangle(a.zEdge, a.xEdge, c.zEdge);
-                addTriangle(a.xEdge, f.yEdge, c.zEdge);
-                addTriangle(c.zEdge, f.yEdge, g.xEdge);
-                addTriangle(a.xEdge, b.yEdge, f.yEdge);
+                addTriangle(a.zEdge, c.zEdge, a.xEdge);
+                addTriangle(a.xEdge, c.zEdge, f.yEdge);
+                addTriangle(c.zEdge, g.xEdge, f.yEdge);
+                addTriangle(a.xEdge, f.yEdge, b.yEdge);
                 break;
             case 116:
                 addTriangle(g.xEdge, f.yEdge, c.xEdge);
@@ -1566,10 +1703,10 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(a.xEdge, f.yEdge, b.zEdge);
                 break;
             case 141:
-                addTriangleR(a.zEdge, a.xEdge, c.zEdge);
-                addTriangleR(a.xEdge, f.yEdge, c.zEdge);
-                addTriangleR(c.zEdge, f.yEdge, g.xEdge);
-                addTriangleR(a.xEdge, b.yEdge, f.yEdge);
+                addTriangle(a.zEdge, a.xEdge, c.zEdge);
+                addTriangle(a.xEdge, f.yEdge, c.zEdge);
+                addTriangle(c.zEdge, f.yEdge, g.xEdge);
+                addTriangle(a.xEdge, b.yEdge, f.yEdge);
                 break;
             case 139:
                 addTriangleR(g.xEdge, f.yEdge, c.xEdge);
