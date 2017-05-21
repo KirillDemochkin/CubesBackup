@@ -30,7 +30,7 @@ public class VoxelChunk : MonoBehaviour {
 
     public GameObject cubeprefab;
 
-    public void initialize(int _resolution, float size, Material meshMaterial, int cellConfig)
+    public void initialize(int _resolution, float size, Material meshMaterial, int cellConfig, bool state)
     {
         checkCellType = cellConfig;
         resolution = _resolution;
@@ -56,7 +56,7 @@ public class VoxelChunk : MonoBehaviour {
             {
                 for(int x = 0; x < resolution; x++, i++)
                 {
-                    createVoxel(i, x, y, z);
+                    createVoxel(i, x, y, z, state);
                 }
             }
         }
@@ -71,14 +71,14 @@ public class VoxelChunk : MonoBehaviour {
         refresh();
     }
 
-    private void createVoxel(int i, int x, int y, int z)
+    private void createVoxel(int i, int x, int y, int z, bool state)
     {
         GameObject o = Instantiate(voxelPrefab) as GameObject;
         o.transform.parent = transform;
         o.transform.localPosition = new Vector3((x + 0.5f) * voxelSize, (y + 0.5f) * voxelSize, (z + 0.5f) * voxelSize);
         o.transform.localScale = Vector3.one * voxelSize*0.03f;
         voxelMaterials[i] = o.GetComponent<MeshRenderer>().material;
-        voxels[z * resolution * resolution + y * resolution + x] = new Voxel(x, y, z, voxelSize);
+        voxels[z * resolution * resolution + y * resolution + x] = new Voxel(x, y, z, voxelSize, state);
     }
 
     public void setVoxel(int x, int y, int z, bool state)
@@ -932,10 +932,10 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangle(e.yEdge, f.yEdge, b.zEdge);
                 break;
             case 71:
-                addTriangle(a.xEdge, b.yEdge, e.xEdge);
-                addTriangle(e.xEdge, b.yEdge, c.zEdge);
-                addTriangle(e.xEdge, c.zEdge, e.yEdge);
-                addTriangle(b.yEdge, d.zEdge, c.zEdge);
+                addTriangle(e.yEdge, c.xEdge, g.xEdge);
+                addTriangle(e.yEdge, b.yEdge, c.xEdge);
+                addTriangle(e.yEdge, b.zEdge, b.yEdge);
+                addTriangle(a.zEdge, b.zEdge, e.yEdge);
                 break;
             case 75:
                 addTriangle(b.zEdge, d.zEdge, a.zEdge);
@@ -1094,10 +1094,14 @@ public class VoxelChunk : MonoBehaviour {
             case 249:
                 addTriangle(a.xEdge, b.yEdge, b.zEdge);
                 addTriangle(a.yEdge, c.zEdge, c.xEdge);
+                addTriangle(c.xEdge, a.xEdge, a.yEdge); //side abcd
+                addTriangle(c.xEdge, b.yEdge, a.xEdge);
                 break;
             case 246:
                 addTriangle(a.xEdge, a.zEdge, a.yEdge);
                 addTriangle(c.xEdge, d.zEdge, b.yEdge);
+                addTriangle(c.xEdge, a.xEdge, a.yEdge); //side abcd
+                addTriangle(c.xEdge, b.yEdge, a.xEdge);
                 break;
             case 245:
                 addTriangle(a.xEdge, c.xEdge, d.zEdge);
@@ -1114,10 +1118,14 @@ public class VoxelChunk : MonoBehaviour {
             case 237:
                 addTriangle(a.xEdge, b.yEdge, b.zEdge);
                 addTriangle(a.zEdge, e.xEdge, e.yEdge);
+                addTriangle(a.zEdge, b.zEdge, e.xEdge);//side abef
+                addTriangle(a.zEdge, a.xEdge, b.zEdge);
                 break;
             case 235:
                 addTriangle(a.yEdge, c.zEdge, c.xEdge);
                 addTriangle(a.zEdge, e.xEdge, e.yEdge);
+                addTriangle(c.zEdge, a.yEdge, a.zEdge);//side aceg
+                addTriangle(c.zEdge, a.zEdge, e.yEdge);
                 break;
             case 231:
                 addTriangle(c.xEdge, d.zEdge, b.yEdge);
@@ -1126,6 +1134,8 @@ public class VoxelChunk : MonoBehaviour {
             case 222:
                 addTriangle(a.xEdge, a.zEdge, a.yEdge);
                 addTriangle(e.xEdge, b.zEdge, f.yEdge);
+                addTriangle(a.zEdge, b.zEdge, e.xEdge);//side abef
+                addTriangle(a.zEdge, a.xEdge, b.zEdge);
                 break;
             case 221:
                 addTriangle(e.xEdge, a.xEdge, b.yEdge);
@@ -1138,6 +1148,8 @@ public class VoxelChunk : MonoBehaviour {
             case 215:
                 addTriangle(c.xEdge, d.zEdge, b.yEdge);
                 addTriangle(e.xEdge, b.zEdge, f.yEdge);
+                addTriangle(d.zEdge, f.yEdge, b.zEdge);//side bdfh
+                addTriangle(d.zEdge, b.zEdge, b.yEdge);
                 break;
             case 207:
                 addTriangle(a.zEdge, b.zEdge, e.yEdge);
@@ -1146,6 +1158,8 @@ public class VoxelChunk : MonoBehaviour {
             case 190:
                 addTriangle(a.xEdge, a.zEdge, a.yEdge);
                 addTriangle(e.yEdge, g.xEdge, c.zEdge);
+                addTriangle(c.zEdge, a.yEdge, a.zEdge);//side aceg
+                addTriangle(c.zEdge, a.zEdge, e.yEdge);
                 break;
             case 189:
                 addTriangle(a.xEdge, b.yEdge, b.zEdge);
@@ -1158,6 +1172,8 @@ public class VoxelChunk : MonoBehaviour {
             case 183:
                 addTriangle(c.xEdge, d.zEdge, b.yEdge);
                 addTriangle(e.yEdge, g.xEdge, c.zEdge);
+                addTriangle(c.zEdge, g.xEdge, d.zEdge);//cdgh
+                addTriangle(c.zEdge, d.zEdge, c.xEdge);
                 break;
             case 175:
                 addTriangle(a.zEdge, e.xEdge, g.xEdge);
@@ -1166,6 +1182,8 @@ public class VoxelChunk : MonoBehaviour {
             case 159:
                 addTriangle(e.xEdge, b.zEdge, f.yEdge);
                 addTriangle(e.yEdge, g.xEdge, c.zEdge);
+                addTriangle(e.yEdge, e.xEdge, g.xEdge);//side efgh
+                addTriangle(e.xEdge, f.yEdge, g.xEdge);//
                 break;
             case 126:
                 addTriangle(a.xEdge, a.zEdge, a.yEdge);
@@ -1174,10 +1192,14 @@ public class VoxelChunk : MonoBehaviour {
             case 125:
                 addTriangle(a.xEdge, b.yEdge, b.zEdge);
                 addTriangle(f.yEdge, d.zEdge, g.xEdge);
+                addTriangle(d.zEdge, f.yEdge, b.zEdge);//side bdfh
+                addTriangle(d.zEdge, b.zEdge, b.yEdge);
                 break;
             case 123:
                 addTriangle(a.yEdge, c.zEdge, c.xEdge);
                 addTriangle(f.yEdge, d.zEdge, g.xEdge);
+                addTriangle(c.zEdge, g.xEdge, d.zEdge);//cdgh
+                addTriangle(c.zEdge, d.zEdge, c.xEdge);
                 break;
             case 119:
                 addTriangle(g.xEdge, b.yEdge, c.xEdge);
@@ -1186,6 +1208,9 @@ public class VoxelChunk : MonoBehaviour {
             case 111:
                 addTriangle(a.zEdge, e.xEdge, e.yEdge);
                 addTriangle(f.yEdge, d.zEdge, g.xEdge);
+                addTriangle(e.yEdge, e.xEdge, g.xEdge);//side efgh
+                addTriangle(e.xEdge, f.yEdge, g.xEdge);//
+
                 break;
             case 95:
                 addTriangle(g.xEdge, e.xEdge, b.zEdge);
@@ -1227,24 +1252,32 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(c.zEdge, e.yEdge, e.xEdge);
                 break;
             case 233:
-                addTriangleR(a.xEdge, b.zEdge, b.yEdge);
-                addTriangleR(a.yEdge, c.xEdge, c.zEdge);
-                addTriangleR(a.zEdge, e.yEdge, e.xEdge);
+                addTriangle(a.xEdge, a.yEdge, a.zEdge);
+                addTriangleR(b.yEdge, c.xEdge, c.zEdge);
+                addTriangleR(b.yEdge, c.zEdge, b.zEdge);
+                addTriangleR(c.zEdge, e.yEdge, b.zEdge);
+                addTriangleR(b.zEdge, e.yEdge, e.xEdge);
                 break;
             case 230:
                 addTriangleR(a.xEdge, e.yEdge, e.xEdge);
                 addTriangleR(e.yEdge, a.xEdge, a.yEdge);
                 addTriangleR(c.xEdge, b.yEdge, d.zEdge);
+                addTriangle(c.xEdge, a.xEdge, a.yEdge); //side abcd
+                addTriangle(c.xEdge, b.yEdge, a.xEdge);
                 break;
             case 229:
                 addTriangleR(a.xEdge, d.zEdge, c.xEdge);
                 addTriangleR(b.zEdge, d.zEdge, a.xEdge);
                 addTriangleR(a.zEdge, e.yEdge, e.xEdge);
+                addTriangle(a.zEdge, b.zEdge, e.xEdge);//side abef
+                addTriangle(a.zEdge, a.xEdge, b.zEdge);
                 break;
             case 227:
                 addTriangleR(a.yEdge, b.yEdge, d.zEdge);
                 addTriangleR(d.zEdge, c.zEdge, a.yEdge);
                 addTriangleR(a.zEdge, e.yEdge, e.xEdge);
+                addTriangle(c.zEdge, a.yEdge, a.zEdge);//side aceg
+                addTriangle(c.zEdge, a.zEdge, e.yEdge);
                 break;
             case 220:
                 addTriangleR(a.yEdge, f.yEdge, b.yEdge);
@@ -1255,16 +1288,22 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(a.xEdge, c.zEdge, a.zEdge);
                 addTriangleR(c.xEdge, c.zEdge, a.xEdge);
                 addTriangleR(e.xEdge, f.yEdge, b.zEdge);
+                addTriangle(a.zEdge, b.zEdge, e.xEdge);//side abef
+                addTriangle(a.zEdge, a.xEdge, b.zEdge);
                 break;
             case 217:
                 addTriangleR(e.xEdge, b.yEdge, a.xEdge);
                 addTriangleR(b.yEdge, e.xEdge, f.yEdge);
                 addTriangleR(a.yEdge, c.xEdge, c.zEdge);
+                addTriangle(c.xEdge, a.xEdge, a.yEdge); //side abcd
+                addTriangle(c.xEdge, b.yEdge, a.xEdge);
                 break;
             case 214:
-                addTriangleR(a.xEdge, a.yEdge, a.zEdge);
-                addTriangleR(c.xEdge, b.yEdge, d.zEdge);
-                addTriangleR(e.xEdge, f.yEdge, b.zEdge);
+                addTriangle(a.xEdge, b.zEdge, b.yEdge);
+                addTriangleR(a.yEdge, d.zEdge, c.xEdge);
+                addTriangleR(a.yEdge, a.zEdge, d.zEdge);
+                addTriangleR(a.zEdge, f.yEdge, d.zEdge);
+                addTriangleR(a.zEdge, e.xEdge, f.yEdge);
                 break;
             case 213:
                 addTriangleR(a.xEdge, e.xEdge, c.xEdge);
@@ -1275,6 +1314,8 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(a.yEdge, b.yEdge, d.zEdge);
                 addTriangleR(d.zEdge, c.zEdge, a.yEdge);
                 addTriangleR(e.xEdge, f.yEdge, b.zEdge);
+                addTriangle(d.zEdge, f.yEdge, b.zEdge);//side bdfh
+                addTriangle(d.zEdge, b.zEdge, b.yEdge);
                 break;
             case 206:
                 addTriangleR(a.yEdge, e.yEdge, f.yEdge);
@@ -1290,16 +1331,22 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(a.zEdge, e.yEdge, b.zEdge);
                 addTriangleR(e.yEdge, f.yEdge, b.zEdge);
                 addTriangleR(a.yEdge, c.xEdge, c.zEdge);
+                addTriangle(c.zEdge, a.yEdge, a.zEdge);//side aceg
+                addTriangle(c.zEdge, a.zEdge, e.yEdge);
                 break;
             case 199:
                 addTriangleR(a.zEdge, e.yEdge, b.zEdge);
                 addTriangleR(e.yEdge, f.yEdge, b.zEdge);
                 addTriangleR(c.xEdge, b.yEdge, d.zEdge);
+                addTriangle(d.zEdge, f.yEdge, b.zEdge);//side bdfh
+                addTriangle(d.zEdge, b.zEdge, b.yEdge);
                 break;
             case 188:
                 addTriangleR(b.zEdge, a.yEdge, a.zEdge);
                 addTriangleR(a.yEdge, b.zEdge, b.yEdge);
                 addTriangleR(e.yEdge, c.zEdge, g.xEdge);
+                addTriangle(c.zEdge, a.yEdge, a.zEdge);//side aceg
+                addTriangle(c.zEdge, a.zEdge, e.yEdge);
                 break;
             case 186:
                 addTriangleR(a.xEdge, c.xEdge, g.xEdge);
@@ -1310,16 +1357,22 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(c.xEdge, g.xEdge, a.yEdge);
                 addTriangleR(e.yEdge, a.yEdge, g.xEdge);
                 addTriangleR(a.xEdge, b.zEdge, b.yEdge);
+                addTriangle(c.xEdge, a.xEdge, a.yEdge); //side abcd
+                addTriangle(c.xEdge, b.yEdge, a.xEdge);
                 break;
             case 182:
-                addTriangleR(a.xEdge, a.yEdge, a.zEdge);
-                addTriangleR(c.xEdge, b.yEdge, d.zEdge);
-                addTriangleR(e.yEdge, c.zEdge, g.xEdge);
+                addTriangle(a.yEdge, c.xEdge, c.zEdge);
+                addTriangleR(a.zEdge, g.xEdge, e.yEdge);
+                addTriangleR(a.xEdge, g.xEdge, a.zEdge);
+                addTriangleR(a.xEdge, d.zEdge, g.xEdge);
+                addTriangleR(a.xEdge, b.yEdge, d.zEdge);
                 break;
             case 181:
                 addTriangleR(a.xEdge, d.zEdge, c.xEdge);
                 addTriangleR(b.zEdge, d.zEdge, a.xEdge);
                 addTriangleR(e.yEdge, c.zEdge, g.xEdge);
+                addTriangle(c.zEdge, g.xEdge, d.zEdge);//cdgh
+                addTriangle(c.zEdge, d.zEdge, c.xEdge);
                 break;
             case 179:
                 addTriangleR(a.yEdge, b.yEdge, e.yEdge);
@@ -1335,6 +1388,8 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(a.zEdge, g.xEdge, e.xEdge);
                 addTriangleR(g.xEdge, a.zEdge, c.zEdge);
                 addTriangleR(a.xEdge, b.zEdge, b.yEdge);
+                addTriangle(a.zEdge, b.zEdge, e.xEdge);//side abef
+                addTriangle(a.zEdge, a.xEdge, b.zEdge);
                 break;
             case 171:
                 addTriangleR(c.xEdge, g.xEdge, e.xEdge);
@@ -1345,26 +1400,36 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(a.zEdge, g.xEdge, e.xEdge);
                 addTriangleR(g.xEdge, a.zEdge, c.zEdge);
                 addTriangleR(c.xEdge, b.yEdge, d.zEdge);
+                addTriangle(c.zEdge, g.xEdge, d.zEdge);//cdgh
+                addTriangle(c.zEdge, d.zEdge, c.xEdge);
                 break;
             case 158:
-                addTriangleR(a.xEdge, a.yEdge, a.zEdge);
-                addTriangleR(e.xEdge, f.yEdge, b.zEdge);
-                addTriangleR(e.yEdge, c.zEdge, g.xEdge);
+                addTriangle(a.zEdge, e.yEdge, e.xEdge);
+                addTriangleR(a.yEdge, c.zEdge, g.xEdge);
+                addTriangleR(a.yEdge, g.xEdge, a.xEdge);
+                addTriangleR(a.xEdge, g.xEdge, f.yEdge);
+                addTriangleR(a.xEdge, f.yEdge, b.zEdge);
                 break;
             case 157:
                 addTriangleR(e.xEdge, b.yEdge, a.xEdge);
                 addTriangleR(b.yEdge, e.xEdge, f.yEdge);
                 addTriangleR(e.yEdge, c.zEdge, g.xEdge);
+                addTriangle(e.yEdge, e.xEdge, g.xEdge);//side efgh
+                addTriangle(e.xEdge, f.yEdge, g.xEdge);//
                 break;
             case 155:
                 addTriangleR(c.xEdge, g.xEdge, a.yEdge);
                 addTriangleR(e.yEdge, a.yEdge, g.xEdge);
                 addTriangleR(e.xEdge, f.yEdge, b.zEdge);
+                addTriangle(e.yEdge, e.xEdge, g.xEdge);//side efgh
+                addTriangle(e.xEdge, f.yEdge, g.xEdge);//
                 break;
             case 151:
-                addTriangleR(c.xEdge, b.yEdge, d.zEdge);
-                addTriangleR(e.xEdge, f.yEdge, b.zEdge);
-                addTriangleR(e.yEdge, c.zEdge, g.xEdge);
+                addTriangle(f.yEdge, g.xEdge, d.zEdge);
+                addTriangle(b.yEdge, c.xEdge, c.zEdge);
+                addTriangle(b.yEdge, c.zEdge, b.zEdge);
+                addTriangle(c.zEdge, e.yEdge, b.zEdge);
+                addTriangle(b.zEdge, e.yEdge, e.xEdge);
                 break;
             case 143:
                 addTriangleR(a.zEdge, c.zEdge, b.zEdge);
@@ -1375,21 +1440,29 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(b.zEdge, a.yEdge, a.zEdge);
                 addTriangleR(a.yEdge, b.zEdge, b.yEdge);
                 addTriangleR(f.yEdge, g.xEdge, d.zEdge); //128
+                addTriangle(d.zEdge, f.yEdge, b.zEdge);
+                addTriangle(d.zEdge, b.zEdge, b.yEdge);
                 break;
             case 122:
                 addTriangleR(a.xEdge, c.zEdge, a.zEdge);
                 addTriangleR(c.xEdge, c.zEdge, a.xEdge);
                 addTriangleR(f.yEdge, g.xEdge, d.zEdge);
+                addTriangle(c.zEdge, d.zEdge, c.xEdge);
+                addTriangle(c.zEdge, g.xEdge, d.xEdge);
                 break;
             case 121:
-                addTriangleR(a.xEdge, b.zEdge, b.yEdge);
-                addTriangleR(a.yEdge, c.xEdge, c.zEdge);
-                addTriangleR(f.yEdge, g.xEdge, d.zEdge);
+                addTriangle(c.xEdge, b.yEdge, d.zEdge);
+                addTriangle(a.yEdge, c.zEdge, g.xEdge);
+                addTriangle(a.yEdge, g.xEdge, a.xEdge);
+                addTriangle(a.xEdge, g.xEdge, f.yEdge);
+                addTriangle(a.xEdge, f.yEdge, b.zEdge);
                 break;
             case 118:
                 addTriangleR(g.xEdge, c.xEdge, b.yEdge);
                 addTriangleR(b.yEdge, f.yEdge, g.xEdge);
                 addTriangleR(a.xEdge, a.yEdge, a.zEdge);
+                addTriangle(c.xEdge, a.xEdge, a.yEdge);
+                addTriangle(c.xEdge, b.yEdge, a.xEdge);
                 break;
             case 117:
                 addTriangleR(a.xEdge, g.xEdge, c.xEdge);
@@ -1405,26 +1478,36 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(a.xEdge, e.yEdge, e.xEdge);
                 addTriangleR(e.yEdge, a.xEdge, a.yEdge);
                 addTriangleR(f.yEdge, g.xEdge, d.zEdge);
+                addTriangle(g.xEdge, e.yEdge, e.xEdge);
+                addTriangle(g.xEdge, e.xEdge, f.yEdge);
                 break;
             case 109:
-                addTriangleR(a.xEdge, b.zEdge, b.yEdge);
-                addTriangleR(a.zEdge, e.yEdge, e.xEdge);
-                addTriangleR(f.yEdge, g.xEdge, d.zEdge);
+                addTriangle(e.xEdge, f.yEdge, b.zEdge);
+                addTriangle(a.zEdge, g.xEdge, e.yEdge);
+                addTriangle(a.xEdge, g.xEdge, a.zEdge);
+                addTriangle(a.xEdge, d.zEdge, g.xEdge);
+                addTriangle(a.xEdge, b.yEdge, d.zEdge);
                 break;
             case 107:
-                addTriangleR(a.yEdge, c.xEdge, c.zEdge);
-                addTriangleR(a.zEdge, e.yEdge, e.xEdge);
-                addTriangleR(f.yEdge, g.xEdge, d.zEdge);
+                addTriangle(e.yEdge, c.zEdge, g.xEdge);
+                addTriangle(a.yEdge, d.zEdge, c.xEdge);
+                addTriangle(a.yEdge, a.zEdge, d.zEdge);
+                addTriangle(a.zEdge, f.yEdge, d.zEdge);
+                addTriangle(a.zEdge, e.xEdge, f.yEdge);
                 break;
             case 103:
                 addTriangleR(g.xEdge, c.xEdge, b.yEdge);
                 addTriangleR(b.yEdge, f.yEdge, g.xEdge);
                 addTriangleR(a.zEdge, e.yEdge, e.xEdge);//16
+                addTriangle(g.xEdge, e.yEdge, e.xEdge);
+                addTriangle(g.xEdge, e.xEdge, f.yEdge);
                 break;
             case 94:
                 addTriangleR(g.xEdge, b.zEdge, e.xEdge);
                 addTriangleR(b.zEdge, g.xEdge, d.zEdge);
                 addTriangleR(a.xEdge, a.yEdge, a.zEdge);//1
+                addTriangle(a.zEdge, a.xEdge, b.zEdge);
+                addTriangle(a.zEdge, b.zEdge, e.xEdge);
                 break;
             case 93:
                 addTriangleR(a.xEdge, e.xEdge, g.xEdge);
@@ -1435,6 +1518,8 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(g.xEdge, b.zEdge, e.xEdge);
                 addTriangleR(b.zEdge, g.xEdge, d.zEdge);
                 addTriangleR(a.yEdge, c.xEdge, c.zEdge);//4
+                addTriangle(c.zEdge, g.xEdge, d.zEdge);
+                addTriangle(c.zEdge, d.zEdge, c.xEdge);
                 break;
             case 87:
                 addTriangleR(c.xEdge, e.xEdge, g.xEdge);
@@ -1450,11 +1535,15 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(e.yEdge, c.zEdge, f.yEdge);//192->
                 addTriangleR(c.zEdge, d.zEdge, f.yEdge);//192->
                 addTriangleR(a.xEdge, a.yEdge, a.zEdge);
+                addTriangle(a.zEdge, c.zEdge, a.yEdge);
+                addTriangle(c.zEdge, a.zEdge, e.yEdge);
                 break;
             case 61:
                 addTriangleR(e.yEdge, c.zEdge, f.yEdge);//192->
                 addTriangleR(c.zEdge, d.zEdge, f.yEdge);
                 addTriangleR(a.xEdge, b.zEdge, b.yEdge);
+                addTriangle(f.yEdge, b.zEdge, d.zEdge);
+                addTriangle(d.zEdge, b.zEdge, b.yEdge);
                 break;
             case 59:
                 addTriangleR(a.yEdge, f.yEdge, e.yEdge);
@@ -1476,10 +1565,11 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(e.yEdge, b.zEdge, e.xEdge);
                 addTriangleR(b.zEdge, e.yEdge, c.zEdge);
                 break;
-            //4 vertices finally
+            //four vertices finally
             case 240:
                 addTriangleR(a.zEdge, b.zEdge, c.zEdge);
                 addTriangleR(c.zEdge, b.zEdge, d.zEdge);
+
                 break;
             case 232:
                 addTriangleR(b.yEdge, c.xEdge, c.zEdge);
@@ -1500,10 +1590,10 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(b.yEdge, d.zEdge, c.zEdge);
                 break;
             case 225:
-                addTriangleR(b.zEdge, d.zEdge, c.zEdge);
-                addTriangleR(c.zEdge, a.xEdge, b.zEdge);
-                addTriangleR(c.zEdge, a.yEdge, a.xEdge);
-                addTriangleR(a.zEdge, e.yEdge, e.xEdge);//16
+                addTriangle(a.xEdge, a.yEdge, a.zEdge);
+                addTriangle(b.zEdge, c.zEdge, d.zEdge);
+                addTriangle(e.yEdge, b.zEdge, e.xEdge);
+                addTriangle(b.zEdge, e.yEdge, c.zEdge);
                 break;
             case 216:
                 /*addTriangleR(c.zEdge, a.zEdge, e.xEdge);
@@ -1522,10 +1612,10 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(a.zEdge, e.xEdge, f.yEdge);
                 break;
             case 210:
-                addTriangleR(d.zEdge, a.zEdge, a.xEdge);
-                addTriangleR(c.zEdge, a.zEdge, d.zEdge);
-                addTriangleR(a.xEdge, b.yEdge, d.zEdge);
-                addTriangleR(e.xEdge, f.yEdge, b.zEdge);//32
+                addTriangle(a.xEdge, b.zEdge, b.yEdge);
+                addTriangle(a.zEdge, c.zEdge, d.zEdge);
+                addTriangle(f.yEdge, e.xEdge, a.zEdge);
+                addTriangle(a.zEdge, d.zEdge, f.yEdge);
                 break;
             case 209:
                 addTriangleR(a.xEdge, e.xEdge, a.yEdge);
@@ -1588,10 +1678,10 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(b.yEdge, d.zEdge, c.zEdge);
                 break;
             case 180:
-                addTriangleR(b.zEdge, d.zEdge, a.zEdge);
-                addTriangleR(a.zEdge, d.zEdge, a.yEdge);
-                addTriangleR(a.yEdge, d.zEdge, c.xEdge);
-                addTriangleR(e.yEdge, c.zEdge, g.xEdge);//64
+                addTriangle(a.yEdge, c.xEdge, c.zEdge);
+                addTriangle(a.zEdge, d.zEdge, b.zEdge);
+                addTriangle(e.yEdge, g.xEdge, d.zEdge);
+                addTriangle(a.zEdge, e.yEdge, d.zEdge);
                 break;
             case 178:
                 addTriangleR(a.zEdge, g.xEdge, e.yEdge);
@@ -1616,16 +1706,16 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(g.xEdge, e.xEdge, a.xEdge);
                 break;
             case 169:
-                addTriangleR(c.xEdge, g.xEdge, e.xEdge);
-                addTriangleR(a.yEdge, c.xEdge, a.zEdge);
-                addTriangleR(a.zEdge, c.xEdge, e.xEdge);
-                addTriangleR(a.xEdge, b.zEdge, b.yEdge);
+                addTriangle(a.xEdge, a.yEdge, a.zEdge);
+                addTriangle(c.xEdge, e.xEdge, g.xEdge);
+                addTriangle(b.zEdge, c.xEdge, b.yEdge);
+                addTriangle(e.xEdge, c.xEdge, b.zEdge);
                 break;
             case 166:
-                addTriangleR(a.xEdge, g.xEdge, e.xEdge);
-                addTriangleR(a.xEdge, a.yEdge, g.xEdge);
-                addTriangleR(a.yEdge, c.zEdge, g.xEdge);
-                addTriangleR(c.xEdge, b.yEdge, d.zEdge);
+                addTriangle(a.yEdge, c.xEdge, c.zEdge);
+                addTriangle(a.xEdge, e.xEdge, g.xEdge);
+                addTriangle(d.zEdge, b.yEdge, a.xEdge);
+                addTriangle(a.xEdge, g.xEdge, d.zEdge);
                 break;
             case 165:
                 /*addTriangleR(a.zEdge, g.xEdge, e.xEdge);
@@ -1654,10 +1744,10 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangle(a.zEdge, e.yEdge, e.xEdge);
                 break;
             case 154:
-                addTriangleR(a.xEdge, c.xEdge, g.xEdge);
-                addTriangleR(a.xEdge, g.xEdge, a.zEdge);
-                addTriangleR(a.zEdge, g.xEdge, e.yEdge);
-                addTriangleR(e.xEdge, f.yEdge, b.zEdge);
+                addTriangle(a.zEdge, e.yEdge, e.xEdge);
+                addTriangle(a.xEdge, g.xEdge, c.xEdge);
+                addTriangle(b.zEdge, f.yEdge, g.xEdge);
+                addTriangle(a.xEdge, b.zEdge, g.xEdge);
                 break;
             case 153:
                 /*addTriangleR(c.xEdge, g.xEdge, a.yEdge);
@@ -1681,10 +1771,10 @@ public class VoxelChunk : MonoBehaviour {
 
                 break;
             case 149:
-                addTriangleR(a.xEdge, e.xEdge, c.xEdge);
-                addTriangleR(c.xEdge, e.xEdge, f.yEdge);
-                addTriangleR(f.yEdge, d.zEdge, c.xEdge);
-                addTriangleR(e.yEdge, c.zEdge, g.xEdge);
+                addTriangle(f.yEdge, g.xEdge, d.zEdge);
+                addTriangle(a.xEdge, c.xEdge, e.xEdge);
+                addTriangle(c.xEdge, c.zEdge, e.xEdge);
+                addTriangle(c.zEdge, e.yEdge, e.xEdge);
                 break;
             case 147:
                 /*addTriangleR(a.yEdge, b.yEdge, e.yEdge);
@@ -1715,10 +1805,10 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(f.yEdge, b.zEdge, a.zEdge);
                 break;
             case 135:
-                addTriangleR(a.zEdge, c.zEdge, b.zEdge);
-                addTriangleR(c.zEdge, g.xEdge, f.yEdge);
-                addTriangleR(c.zEdge, f.yEdge, b.zEdge);
-                addTriangleR(c.xEdge, b.yEdge, d.zEdge);
+                addTriangle(f.yEdge, g.xEdge, d.zEdge);
+                addTriangle(c.zEdge, a.zEdge, b.zEdge);
+                addTriangle(c.zEdge, b.zEdge, b.yEdge);
+                addTriangle(c.xEdge, c.zEdge, b.yEdge);
                 break;
 
         }

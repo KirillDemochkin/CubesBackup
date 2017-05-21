@@ -11,12 +11,12 @@ public class Voxel {
 
     public Voxel() {}    
 
-    public Voxel(int x, int y, int z, float size)
+    public Voxel(int x, int y, int z, float size, bool state)
     {
         position.x = (x + 0.5f) * size;
         position.y = (y + 0.5f) * size;
         position.z = (z + 0.5f) * size;
-        state = false;
+        this.state = state;
 
         xEdge = position;
         xEdge.x += size * 0.5f;

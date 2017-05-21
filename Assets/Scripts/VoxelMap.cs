@@ -35,8 +35,23 @@ public class VoxelMap : MonoBehaviour {
             {
                 for (int x = 0; x < chunkResolution; x++, i++)
                 {
-                    
-                    createChunk(i, x, y, z);
+                    if (y<chunkResolution/2)
+                    {
+                        createChunk(i, x, y, z, true);
+                    } else
+                    {
+                        createChunk(i, x, y, z, false);
+                    }
+                }
+            }
+        }
+        for (int i = 0, z = 0; z < chunkResolution; z++)
+        {
+            for (int y = 0; y < chunkResolution; y++)
+            {
+                for (int x = 0; x < chunkResolution; x++, i++)
+                {
+                    chunks[i].refresh();
                 }
             }
         }
@@ -86,7 +101,7 @@ public class VoxelMap : MonoBehaviour {
         if(i - chunkResolution * chunkResolution - 1 >= 0) chunks[i - chunkResolution * chunkResolution - 1].refresh(); //f
     }
 
-    private void createChunk(int i, int x, int y, int z)
+    private void createChunk(int i, int x, int y, int z, bool state)
     {
         VoxelChunk chunk = Instantiate(voxelChunkPrefab) as VoxelChunk;
         /*float offsetX = x == 0 ? 0 : voxelSize;
@@ -96,7 +111,7 @@ public class VoxelMap : MonoBehaviour {
         float offsetY = 0;
         float offsetZ = 0;
 
-        chunk.initialize(voxelResolution, chunkSize, meshMaterial, cellConfig);
+        chunk.initialize(voxelResolution, chunkSize, meshMaterial, cellConfig, state);
         chunk.transform.parent = transform;
         chunk.transform.localPosition = new Vector3(x * chunkSize - halfSize - offsetX, y * chunkSize - halfSize - offsetY, z * chunkSize - halfSize - offsetZ);
         chunks[i] = chunk;//a
