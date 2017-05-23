@@ -85,8 +85,9 @@ public class VoxelMap : MonoBehaviour {
         if (chunks[chunkIndex].voxels[voxelZ * voxelResolution * voxelResolution + voxelY * voxelResolution + voxelX].state != state)
         { 
             chunks[chunkIndex].setVoxel(voxelX, voxelY, voxelZ, state);
+            refreshNeighbours(chunkIndex);
         }
-        refreshNeighbours(chunkIndex);
+        
 
     }
 

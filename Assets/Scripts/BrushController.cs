@@ -50,7 +50,6 @@ public class BrushController : MonoBehaviour {
         //Debug.Log("collided with voxel");
         if(other.tag == "Voxel" && mode != BrushMode.Neutral)
         {
-           
                 if (onVoxelCollided != null)
                 {
                     onVoxelCollided(other.transform.position, mode);

@@ -13,6 +13,7 @@ public class VoxelChunk : MonoBehaviour {
 
     private Material[] voxelMaterials;
     private Material meshMaterial;
+    private MeshData asyncMesh;
 
     public float voxelSize;
     public float halfSize;
@@ -25,6 +26,7 @@ public class VoxelChunk : MonoBehaviour {
     private Mesh mesh;
     private List<Vector3> vertices;
     private List<int> triangles;
+    private bool changedSinceLastUpdate = false;
 
     private MeshRenderer meshRenderer;
 
@@ -40,6 +42,7 @@ public class VoxelChunk : MonoBehaviour {
         halfSize = size / 2;
         voxels = new Voxel[resolution * resolution * resolution];
         voxelMaterials = new Material[voxels.Length];
+        asyncMesh = new MeshData();
 
         dummyX1 = new Voxel();
         dummyX2 = new Voxel();
@@ -71,6 +74,16 @@ public class VoxelChunk : MonoBehaviour {
         refresh();
     }
 
+    private void LateUpdate()
+    {
+        if (changedSinceLastUpdate)
+        {
+            refresh();
+            changedSinceLastUpdate = false;
+        }
+    }
+
+
     private void createVoxel(int i, int x, int y, int z, bool state)
     {
         GameObject o = Instantiate(voxelPrefab) as GameObject;
@@ -84,7 +97,10 @@ public class VoxelChunk : MonoBehaviour {
     public void setVoxel(int x, int y, int z, bool state)
     {
         voxels[z * resolution * resolution + y * resolution + x].state = state;
-        refresh();
+        if (!changedSinceLastUpdate)
+        {
+            changedSinceLastUpdate = true;
+        }
     }
 
     private void setVoxelColors()
@@ -113,15 +129,15 @@ public class VoxelChunk : MonoBehaviour {
             dummyX2.becomeXDummyOf(xNeighbour.voxels[resolution * resolution], chunkSize);
         }
 
-        
 
+        asyncMesh.clear();
         triangulateCell();
 
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
+        //mesh.vertices = asyncMesh.vertices.ToArray();
+        //mesh.triangles = asyncMesh.triangles.ToArray();
         mesh.RecalculateNormals();
-        
-        
     }
 
     private void triangulateCell()
@@ -1838,4 +1854,20 @@ public class VoxelChunk : MonoBehaviour {
         triangles.Add(vertexIndex + 1);
     }
 
+}
+
+public class MeshData
+{
+    public List<Vector3> vertices;
+    public List<int> triangles;
+
+    public MeshData() {
+        vertices = new List<Vector3>();
+        triangles = new List<int>();
+    }
+    public void clear()
+    {
+        vertices.Clear();
+        triangles.Clear();
+    }
 }
