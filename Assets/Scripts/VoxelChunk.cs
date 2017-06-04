@@ -29,6 +29,7 @@ public class VoxelChunk : MonoBehaviour {
     private bool changedSinceLastUpdate = false;
 
     private MeshRenderer meshRenderer;
+    private MeshCollider meshCollider;
 
     public GameObject cubeprefab;
 
@@ -44,6 +45,7 @@ public class VoxelChunk : MonoBehaviour {
         voxelMaterials = new Material[voxels.Length];
         asyncMesh = new MeshData();
 
+    
         dummyX1 = new Voxel();
         dummyX2 = new Voxel();
         dummyY1 = new Voxel();
@@ -65,6 +67,8 @@ public class VoxelChunk : MonoBehaviour {
         }
 
         GetComponent<MeshFilter>().mesh = mesh = new Mesh();
+        meshCollider = GetComponent<MeshCollider>();
+        meshCollider.sharedMesh = mesh;
         meshRenderer = GetComponent<MeshRenderer>();
         meshRenderer.material = meshMaterial;
         mesh.name = "VoxelGrid Mesh";
@@ -138,6 +142,9 @@ public class VoxelChunk : MonoBehaviour {
         //mesh.vertices = asyncMesh.vertices.ToArray();
         //mesh.triangles = asyncMesh.triangles.ToArray();
         mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        meshCollider.sharedMesh = mesh;
+       
     }
 
     private void triangulateCell()

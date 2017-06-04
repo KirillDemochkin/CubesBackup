@@ -10,6 +10,7 @@ public class BrushController : MonoBehaviour {
     public int radius;
     public float speed = 2;
     public Transform brushSphere;
+    
 
 	void Start () {
         mode = BrushMode.Neutral;
