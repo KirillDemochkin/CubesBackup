@@ -13,8 +13,7 @@ public class VoxelChunk : MonoBehaviour {
 
     private Material[] voxelMaterials;
     private Material meshMaterial;
-    private MeshData asyncMesh;
-
+ 
     public float voxelSize;
     public float halfSize;
     public float chunkSize;
@@ -43,7 +42,7 @@ public class VoxelChunk : MonoBehaviour {
         halfSize = size / 2;
         voxels = new Voxel[resolution * resolution * resolution];
         voxelMaterials = new Material[voxels.Length];
-        asyncMesh = new MeshData();
+     
 
     
         dummyX1 = new Voxel();
@@ -134,7 +133,7 @@ public class VoxelChunk : MonoBehaviour {
         }
 
 
-        asyncMesh.clear();
+      
         triangulateCell();
 
         mesh.vertices = vertices.ToArray();
@@ -142,7 +141,7 @@ public class VoxelChunk : MonoBehaviour {
         //mesh.vertices = asyncMesh.vertices.ToArray();
         //mesh.triangles = asyncMesh.triangles.ToArray();
         mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
+        //mesh.RecalculateBounds();
         meshCollider.sharedMesh = mesh;
        
     }

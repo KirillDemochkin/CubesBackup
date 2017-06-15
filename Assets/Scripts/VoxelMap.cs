@@ -14,6 +14,7 @@ public class VoxelMap : MonoBehaviour {
     public Material meshMaterial;
 
     private BrushController brush;
+    public GameObject wallsPrefab;
 
     public VoxelChunk voxelChunkPrefab;
 
@@ -26,8 +27,17 @@ public class VoxelMap : MonoBehaviour {
         halfSize = size * 0.5f;
         chunkSize = size / chunkResolution;
         voxelSize = chunkSize / voxelResolution;
+        var wallDistance = (chunkSize) * (voxelSize)*(size+halfSize/2 -1);
         
         chunks = new VoxelChunk[chunkResolution * chunkResolution * chunkResolution];
+
+        createWall(new Vector3(-wallDistance/2f, 0, 0), new Vector3(0.3f, wallDistance, wallDistance ));
+        createWall(new Vector3(wallDistance/2f, 0, 0), new Vector3(0.3f, wallDistance, wallDistance ));
+
+        createWall(new Vector3(0, -wallDistance/2f, 0), new Vector3(wallDistance, 0.3f, wallDistance));
+        //createWall(new Vector3(wallDistance/2f, wallDistance, wallDistance / 2f), new Vector3(wallDistance / 2f, wallDistance / 2f, wallDistance / 2f));
+        createWall(new Vector3(0, 0, -wallDistance/2f), new Vector3(wallDistance, wallDistance, 0.3f));
+        createWall(new Vector3(0, 0, wallDistance/2f), new Vector3(wallDistance, wallDistance, 0.3f));
 
         for (int i = 0, z = 0; z < chunkResolution; z++)
         {
@@ -57,13 +67,21 @@ public class VoxelMap : MonoBehaviour {
         }
     }
 
+    private void createWall(Vector3 position, Vector3 scale)
+    {
+        var wall = Instantiate(wallsPrefab);
+        wall.transform.position = position;
+        wall.transform.localScale = scale;
+    }
+
     private void Start()
     {
         brush = FindObjectOfType<BrushController>();
         brush.onVoxelCollided += editVoxels;
+        
     }
 
-    private void editVoxels(Vector3 point, BrushController.BrushMode mode)
+    private void editVoxels(Vector3 point, BrushMode mode)
     {
 
         int voxelX = (int)((point.x + halfSize) / voxelSize);
@@ -80,7 +98,7 @@ public class VoxelMap : MonoBehaviour {
         
 
         //Debug.Log(voxelX + ", " + voxelY + ", " + voxelZ + ", ");
-        bool state = mode == BrushController.BrushMode.Filled ? true : false;
+        bool state = mode == BrushMode.Filled ? true : false;
         int chunkIndex = chunkZ * chunkResolution * chunkResolution + chunkY * chunkResolution + chunkX;
         if (chunks[chunkIndex].voxels[voxelZ * voxelResolution * voxelResolution + voxelY * voxelResolution + voxelX].state != state)
         { 

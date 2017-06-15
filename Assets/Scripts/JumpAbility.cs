@@ -16,7 +16,7 @@ public class JumpAbility : Ability {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.position += Vector3.down * speed;
+        transform.position += Vector3.up * speed;
     }
 
   

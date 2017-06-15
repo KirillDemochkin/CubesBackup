@@ -46,7 +46,7 @@ public class Ability : MonoBehaviour {
             }
 
 
-        }
+        } 
 
     }
 

@@ -8,25 +8,33 @@ public class WaveAbility : Ability {
     public float speed;
     public float delay;
     Vector3 expander;
+    
+   
 
     void Start () {
-        expander = new Vector3(1, 1, 0);
+        expander = new Vector3(1, 1, 0.1f);
+        
         Destroy(gameObject, delay);
+        
 	}
 	
 	// Update is called once per frame
 	void Update () {
         transform.localScale += expander * speed;
-        transform.position += Vector3.down * speed/7.5f;
+       
+        
+        
     }
 
-    private void OnTriggerExit(Collider other)
+   
+
+    private void OnTriggerEnter(Collider other)
     {
         
-        if (other.tag == "Voxel" )
-        {
-            callOnVoxelCollided(other.transform.position, BrushMode.Empty);
-            
-        }
+        //Debug.Log("collided with voxel");
+        if (other.tag == "Voxel" && mode != BrushMode.Neutral)
+        {      
+            callOnVoxelCollided(other.transform.position, mode);
+        } 
     }
 }

@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
@@ -16,7 +16,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             public float StrafeSpeed = 4.0f;    // Speed when walking sideways
             public float RunMultiplier = 2.0f;   // Speed when sprinting
 	        public KeyCode RunKey = KeyCode.LeftShift;
-            public float JumpForce = 30f;
+            public float JumpForce = 30f, originalJumpForce = 30f;
             public AnimationCurve SlopeCurveModifier = new AnimationCurve(new Keyframe(-90.0f, 1.0f), new Keyframe(0.0f, 1.0f), new Keyframe(90.0f, 0.0f));
             [HideInInspector] public float CurrentTargetSpeed = 8f;
 
@@ -103,6 +103,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public bool Jumping
         {
             get { return m_Jumping; }
+            set { m_Jumping = true; }
         }
 
         public bool Running
@@ -134,6 +135,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 m_Jump = true;
             }
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                
+                movementSettings.originalJumpForce = movementSettings.JumpForce;
+                movementSettings.JumpForce *= 5;
+                m_Jump = true;
+            }
+            
         }
 
 
@@ -184,6 +193,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 }
             }
             m_Jump = false;
+            movementSettings.JumpForce = movementSettings.originalJumpForce;
         }
 
 
