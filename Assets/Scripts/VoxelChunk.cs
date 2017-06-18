@@ -1693,11 +1693,17 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangle(c.zEdge, d.zEdge, f.yEdge);
 
                 break;
+                //fix me
             case 184:
-                addTriangleR(a.xEdge, b.yEdge, e.xEdge);
+                /*addTriangleR(a.xEdge, b.yEdge, e.xEdge);
                 addTriangleR(e.xEdge, b.yEdge, c.zEdge);
                 addTriangleR(e.xEdge, c.zEdge, e.yEdge);
                 addTriangleR(b.yEdge, d.zEdge, c.zEdge);
+                */
+                addTriangleR(b.zEdge, b.yEdge, c.xEdge);
+                addTriangle(c.xEdge, b.zEdge, e.yEdge);
+                addTriangle(g.xEdge, c.xEdge, e.yEdge);
+                addTriangleR(e.yEdge, a.zEdge, b.zEdge);
                 break;
             case 180:
                 addTriangle(a.yEdge, c.xEdge, c.zEdge);
@@ -1815,6 +1821,7 @@ public class VoxelChunk : MonoBehaviour {
                 addTriangleR(a.xEdge, f.yEdge, b.zEdge);
                 break;
             case 141:
+                //maybe fix?
                 addTriangle(a.zEdge, a.xEdge, c.zEdge);
                 addTriangle(a.xEdge, f.yEdge, c.zEdge);
                 addTriangle(c.zEdge, f.yEdge, g.xEdge);

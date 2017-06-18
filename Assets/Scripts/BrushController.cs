@@ -16,7 +16,7 @@ public class BrushController : MonoBehaviour {
     public Dictionary<AbilityType, Ability> abilities;
     public Text text;
     public Ability jumpPrefab, boomPrefab, shootPrefab, wavePrefab, wallPrefab;
-    
+    public UnityStandardAssets.Characters.FirstPerson.RigidbodyFirstPersonController rbController;
     private Ability curAbilityLeftMouseKey, curAbilityRightMouseKey;
     private bool toggleDraw = true;
 

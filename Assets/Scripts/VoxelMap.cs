@@ -27,7 +27,7 @@ public class VoxelMap : MonoBehaviour {
         halfSize = size * 0.5f;
         chunkSize = size / chunkResolution;
         voxelSize = chunkSize / voxelResolution;
-        var wallDistance = (chunkSize) * (voxelSize)*(size+halfSize/2 -1);
+        var wallDistance = (chunkSize) * (voxelSize)*(size+halfSize/2 + 1);
         
         chunks = new VoxelChunk[chunkResolution * chunkResolution * chunkResolution];
 
